@@ -3,6 +3,7 @@ use std::time::{SystemTime, UNIX_EPOCH};
 use anyhow::{Context, Result, bail};
 use chrono::{DateTime, Utc};
 use jwt_simple::prelude::*;
+use tracing::info;
 
 use crate::config::Configuration;
 use crate::context::{Access, AdditionalClaims};
@@ -32,6 +33,9 @@ pub(crate) fn issue_token(
     let Some(authentication) = config.authentication.as_ref() else {
         bail!("Tried to issue token when auth is not turned on");
     };
+
+    info!(subject, access, "Issuing token for subject {subject} with access {access:?}");
+    
     let custom_claims = AdditionalClaims { access };
     let claims = Claims::with_custom_claims(custom_claims, Duration::from_mins(10))
         .with_issuer(&config.url)
@@ -47,7 +51,7 @@ pub(crate) fn issue_token(
     .into();
 
     let token = authentication.key_pair.key_pair.sign(claims)?;
-
+   
     Ok(Token {
         token,
         expires_in,
