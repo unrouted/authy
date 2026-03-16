@@ -38,7 +38,7 @@ pub(crate) fn issue_token(
         subject,
         "Issuing token for subject {subject} with access {access:?}"
     );
-    
+
     let custom_claims = AdditionalClaims { access };
     let claims = Claims::with_custom_claims(custom_claims, Duration::from_mins(10))
         .with_issuer(&config.url)
