@@ -34,7 +34,10 @@ pub(crate) fn issue_token(
         bail!("Tried to issue token when auth is not turned on");
     };
 
-    info!(subject, "Issuing token for subject {subject} with access {access:?}");
+    info!(
+        subject,
+        "Issuing token for subject {subject} with access {access:?}"
+    );
     
     let custom_claims = AdditionalClaims { access };
     let claims = Claims::with_custom_claims(custom_claims, Duration::from_mins(10))
@@ -51,7 +54,7 @@ pub(crate) fn issue_token(
     .into();
 
     let token = authentication.key_pair.key_pair.sign(claims)?;
-   
+
     Ok(Token {
         token,
         expires_in,
